@@ -16,23 +16,13 @@ function _mFix_url($url) {
 	}
 }
 
-/*if (isset($_POST['gsUrl'])) {
-	$targetURL = $_POST['gsUrl'];
-
-	$labels = GoogleVisionManager::getInstance()->getImageLabels(_mFix_url($targetURL));
-
-	header('Content-Type: application/json');
-
-	if ($labels) {
-		echo json_encode(array('labels' => $labels));
-		exit();
-	}
-	exit();
-}*/
-
+// Get the contents of the request body
+//
 $inputJSONString = file_get_contents('php://input');
 $url = json_decode($inputJSONString, TRUE);
 
+// Check if a base64 image is sent
+//
 if (isset($url['base64GsUrl'])) {
 	$img = str_replace('data:image/png;base64,', '', $url['base64GsUrl']);
 	$img = str_replace(' ', '+', $img);
@@ -53,8 +43,12 @@ if (isset($url['base64GsUrl'])) {
 	}
 }
 
+// Gets the url to the image location required for extraction
+//
 $targetURL = $url['gsUrl'];
 
+// This is what does the actual label detection
+//
 $labels = GoogleVisionManager::getInstance()->getImageLabels(_mFix_url($targetURL));
 
 header('Content-Type: application/json');
